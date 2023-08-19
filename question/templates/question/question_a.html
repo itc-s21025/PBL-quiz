@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extraheader %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'question/question.css' %}">
+{% endblock %}
+{% block main %}
+<div class="main">
+    <div class="queContent">
+    {{ ran }}
+    <h1>{{ count }}問目 </h1>
+        <div class="question">
+
+            {% if ran %}
+                <p class="queText">
+                    {{ ran }}
+                </p>
+
+                </div>
+                </div>
+                <div class="radio">
+                    <form action="" method="post">
+                        {% csrf_token %}
+                        {% for choice in choices %}
+                            <input class="choice" type="radio" name="choice" id="choice{{ forloop.counter }}"
+                                   value="{{ choice.id }} ">
+                            <label for="choice{{ forloop.counter }}">{{ choice.fault }}</label><br>
+                        {% endfor %}
+                        <input type="submit" value="Submit">
+                    </form>
+                    {% else %}
+                    <p>クイズがありません。</p>
+                </div>
+            {% endif %}
+</div>
+{% endblock %}

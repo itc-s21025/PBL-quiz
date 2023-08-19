@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load static %}
+{% block extraheader %}
+    <title>トップページ</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'question/top.css' %}">
+{% endblock %}
+{% block main %}
+<div class="main">
+<h2>作成するクイズのカテゴリを選択してください</h2>
+        <form class="category">
+            <select class="select" name="example" required onChange="location.href=value;">
+            <option class="option" value="#">カテゴリー選択</option>
+            <option class="option" value="{% url 'question_new' 1 %}">漢字</option>
+            <option class="option" value="{% url 'question_new2' 2 %}">計算</option>
+            <option class="option" value="{% url 'question_new3' 3 %}">社会</option>
+            <option class="option" value="{% url 'question_new4' 4 %}">漫画・アニメ</option>
+            <option class="option" value="{% url 'question_new5' 5 %}">基本情報</option>
+            </select>
+
+        </form>
+        <img src="{% static 'question/images/btn.jpg' %}" alt="" width="300" height="300">
+</div>
+{% endblock %}

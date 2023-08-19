@@ -1,0 +1,77 @@
+
+* {
+    margin: 0;
+    padding: 0;
+}
+body {
+    background-size: 900px;
+    background-image: url(images/btn.jpg);
+    background-repeat:no-repeat;
+    background-position: top;
+    background-color:rgba(255,255,255,0.8);
+    background-blend-mode:lighten;
+}
+.main {
+    width: auto;
+    height: auto;
+
+}
+.queContent {
+    margin-top: 200px;
+    margin-bottom: 50px;
+    text-align: center;
+}
+
+.radio {
+    margin-left: 350px;
+}
+.question {
+    max-width: 600px;
+    height: auto;
+    margin:auto;
+    border: solid;
+    background-color: #e8e8e8;
+}
+.btnContent{
+    text-align: left;
+    margin: auto;
+    height: auto;
+    max-width: 600px;
+    width: 600px;
+}
+.btn {
+    max-width: 500px;
+    width: 200px;
+    height: 250px;
+    display: inline-flex;
+    flex-direction: column;
+    background-color: transparent;
+    justify-content:space-between;
+}
+.btnText {
+    border:groove 6px #3f3e3e;
+    height: 50px;
+}
+
+
+@media screen and (max-width: 605px) {
+    .question {
+        width: auto;
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+    .btnContent {
+        width: auto;
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+    .radio {
+    margin-left: 350px;
+    }
+    body {
+        background-size: 1500px;
+        background-image: url(images/nakasone.png);
+        background-position: center;
+        background-color:rgba(200,200,200,0.8);
+    }
+}
