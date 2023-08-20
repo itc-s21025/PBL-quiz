@@ -1,15 +1,25 @@
 import random
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
+from django.views.generic import ListView
+
 from question.forms import QuestionForm, ChoiceForm, QuestionForm2, ChoiceForm2, QuestionForm3, ChoiceForm3, \
     QuestionForm4, QuestionForm5, ChoiceForm5, ChoiceForm4
 from question.models import Question, Choice, Question2, Choice2, Category, Question3, Choice3, Question4, Choice4, \
-    Question5, Choice5
+    Question5, Choice5, QuizResult
 
 
 # Create your views here
+class MypageView(ListView):
+    template_name = 'question/mypages.html'
+    def get_queryset(self):
+        queryset = QuizResult.objects.filter(
+            user=self.request.user).order_by('timestamp')
+        return queryset
+
 
 def top(request):
+    request.session['correct_count'] = 0
     #request.session.clear()
     return render(request, 'question/top.html')
 
@@ -21,211 +31,259 @@ def category(request):
 def question(request):
     question_session = request.session.setdefault('question_count', 1)
     question_categoryid_get = Question.objects.filter(question_category=1).all().order_by('create_at')
-    question_list = list(question_categoryid_get)
-    a = len(question_list)
+    genre = get_object_or_404(Category, pk=1)
     answered_questions = request.session.get('answered_questions', [])
     unanswered_questions = [q for q in question_categoryid_get if q.id not in answered_questions]
-
     if unanswered_questions:
         random_question = random.choice(unanswered_questions)
         answered_questions.append(random_question.id)
         request.session['answered_questions'] = answered_questions
     else:
         random_question = None
-
     correct_count = request.session.get('correct_count', 0)
-    if question_session >= 10:
-        request.session['answered_questions'] = []
-        request.session['question_count'] = 1
-        return render(request, 'question/result.html', {'correct_count': correct_count})
-    q = Question.objects.filter(id=question_session).all()
-    q = q[0]
     choices = Choice.objects.filter(choice_to=random_question).all().order_by('?')
     if request.method == 'POST':
         selected_choice_id = request.POST.get('choice')
+        if not selected_choice_id:
+            error_message = "選択肢を選んでください。"
+            return render(request, "question/question_a.html",
+                          {'choices': choices, 'error_message': error_message,
+                           'count': question_session, 'random_question': random_question})
+
         selected_choice = get_object_or_404(Choice, pk=str(selected_choice_id))
         select = selected_choice.__str__()
         answer = selected_choice.choice_to.answer
         if choices:
             request.session.setdefault('correct_count', 0)
             feedback = '正解です' if answer == select else '不正解です'  # select_choiceには選択した文字列が入る
-            feadback2 = select
             request.session['question_count'] += 1
             if answer == select:
                 request.session['correct_count'] += 1
-
         else:
             feedback = "クイズがありません。"
-
         return render(request, 'question/next/next.html',
-                      {'question': q, 'feedback': feedback, 'feadback2': feadback2, 'answer': answer})
+                      {'feedback': feedback, 'select': select, 'answer': answer})
     else:
         feedback = None
-
+    if question_session > 5:
+        request.session['answered_questions'] = []
+        request.session['question_count'] = 1
+        result_parsent = int((correct_count / 5) * 100)
+        if request.user.is_authenticated:  # ログインしているユーザーのみ保存
+            user = request.user
+            quiz_result = QuizResult(user=user, genre=genre, correct_count=result_parsent)
+            quiz_result.save()
+        return render(request, 'question/result.html', {'correct_count': correct_count, 'result_parsent':result_parsent})
     return render(request, "question/question_a.html",
-                  {'questions': q, 'choices': choices, 'feedback': feedback, 'correct_count': correct_count,
-                   'count': question_session, 'ran':random_question})
+                  {'choices': choices, 'feedback': feedback, 'correct_count': correct_count,
+                   'count': question_session, 'random_question':random_question})
 
 
 def question2(request):
-    question_session = request.session.setdefault('question_count', 0)
+    question_session = request.session.setdefault('question_count', 1)
     question_categoryid_get = Question2.objects.filter(question_category=2).all().order_by('create_at')
-    question_list = list(question_categoryid_get)
-    a = len(question_list)
-    b = random.uniform(1, a)
-    q = Question2.objects.filter(id=b).all()
-    q = q[0]
+    genre = get_object_or_404(Category, pk=2)
+    answered_questions = request.session.get('answered_questions', [])
+    unanswered_questions = [q for q in question_categoryid_get if q.id not in answered_questions]
+    if unanswered_questions:
+        random_question = random.choice(unanswered_questions)
+        answered_questions.append(random_question.id)
+        request.session['answered_questions'] = answered_questions
+    else:
+        random_question = None
     correct_count = request.session.get('correct_count', 0)
-    if question_session >= a:
-        request.session['question_count'] = 0
-        return render(request, 'question/result.html', {'correct_count': correct_count})
-    question = question_list[question_session]
-
-    choices = Choice2.objects.filter(choice_to=b).all().order_by('?')
-
+    choices = Choice2.objects.filter(choice_to=random_question).all().order_by('?')
     if request.method == 'POST':
         selected_choice_id = request.POST.get('choice')
+        if not selected_choice_id:
+            error_message = "選択肢を選んでください。"
+            return render(request, "question/question_a.html",
+                          {'choices': choices, 'error_message': error_message,
+                           'count': question_session, 'random_question': random_question})
+
         selected_choice = get_object_or_404(Choice2, pk=str(selected_choice_id))
         select = selected_choice.__str__()
         answer = selected_choice.choice_to.answer
-
         if choices:
             request.session.setdefault('correct_count', 0)
             feedback = '正解です' if answer == select else '不正解です'  # select_choiceには選択した文字列が入る
             request.session['question_count'] += 1
             if answer == select:
                 request.session['correct_count'] += 1
-
         else:
             feedback = "クイズがありません。"
-
-        return render(request, 'question/next/next2.html', {'question': question, 'feedback': feedback})
+        return render(request, 'question/next/next2.html',
+                      {'feedback': feedback, 'select': select, 'answer': answer})
     else:
         feedback = None
-
+    if question_session > 5:
+        request.session['answered_questions'] = []
+        request.session['question_count'] = 1
+        result_parsent = int((correct_count / 5) * 100)
+        if request.user.is_authenticated:  # ログインしているユーザーのみ保存
+            user = request.user
+            quiz_result = QuizResult(user=user, genre=genre, correct_count=result_parsent)
+            quiz_result.save()
+        return render(request, 'question/result.html', {'correct_count': correct_count, 'result_parsent':result_parsent})
     return render(request, "question/question_a.html",
-                  {'questions': q, 'choices': choices, 'feedback': feedback, 'correct_count': correct_count})
+                  {'choices': choices, 'feedback': feedback, 'correct_count': correct_count,
+                   'count': question_session, 'random_question':random_question})
+
 
 
 def question3(request):
-    question_session = request.session.setdefault('question_count', 0)
+    question_session = request.session.setdefault('question_count', 1)
     question_categoryid_get = Question3.objects.filter(question_category=3).all().order_by('create_at')
-    question_list = list(question_categoryid_get)
-    a = len(question_list)
-    b = random.uniform(1, a)
-    q = Question3.objects.filter(id=b).all()
-    q = q[0]
+    genre = get_object_or_404(Category, pk=3)
+    answered_questions = request.session.get('answered_questions', [])
+    unanswered_questions = [q for q in question_categoryid_get if q.id not in answered_questions]
+    if unanswered_questions:
+        random_question = random.choice(unanswered_questions)
+        answered_questions.append(random_question.id)
+        request.session['answered_questions'] = answered_questions
+    else:
+        random_question = None
     correct_count = request.session.get('correct_count', 0)
-    if question_session >= a:
-        request.session['question_count'] = 0
-        return render(request, 'question/result.html', {'correct_count': correct_count})
-    question = question_list[question_session]
-
-    choices = Choice3.objects.filter(choice_to=b).all().order_by('?')
-
+    choices = Choice3.objects.filter(choice_to=random_question).all().order_by('?')
     if request.method == 'POST':
         selected_choice_id = request.POST.get('choice')
+        if not selected_choice_id:
+            error_message = "選択肢を選んでください。"
+            return render(request, "question/question_a.html",
+                          {'choices': choices, 'error_message': error_message,
+                           'count': question_session, 'random_question': random_question})
+
         selected_choice = get_object_or_404(Choice3, pk=str(selected_choice_id))
         select = selected_choice.__str__()
         answer = selected_choice.choice_to.answer
-
         if choices:
             request.session.setdefault('correct_count', 0)
             feedback = '正解です' if answer == select else '不正解です'  # select_choiceには選択した文字列が入る
             request.session['question_count'] += 1
             if answer == select:
                 request.session['correct_count'] += 1
-
         else:
             feedback = "クイズがありません。"
-
-        return render(request, 'question/next/next3.html', {'question': question, 'feedback': feedback})
+        return render(request, 'question/next/next3.html',
+                      {'feedback': feedback, 'select': select, 'answer': answer})
     else:
         feedback = None
-
+    if question_session > 5:
+        request.session['answered_questions'] = []
+        request.session['question_count'] = 1
+        result_parsent = int((correct_count / 5) * 100)
+        if request.user.is_authenticated:  # ログインしているユーザーのみ保存
+            user = request.user
+            quiz_result = QuizResult(user=user, genre=genre, correct_count=result_parsent)
+            quiz_result.save()
+        return render(request, 'question/result.html', {'correct_count': correct_count, 'result_parsent':result_parsent})
     return render(request, "question/question_a.html",
-                  {'questions': q, 'choices': choices, 'feedback': feedback, 'correct_count': correct_count})
+                  {'choices': choices, 'feedback': feedback, 'correct_count': correct_count,
+                   'count': question_session, 'random_question':random_question})
+
 
 
 def question4(request):
-    question_session = request.session.setdefault('question_count', 0)
+    question_session = request.session.setdefault('question_count', 1)
     question_categoryid_get = Question4.objects.filter(question_category=4).all().order_by('create_at')
-    question_list = list(question_categoryid_get)
-    a = len(question_list)
-    b = random.uniform(1, a)
-    q = Question4.objects.filter(id=b).all()
-    q = q[0]
+    genre = get_object_or_404(Category, pk=4)
+    answered_questions = request.session.get('answered_questions', [])
+    unanswered_questions = [q for q in question_categoryid_get if q.id not in answered_questions]
+    if unanswered_questions:
+        random_question = random.choice(unanswered_questions)
+        answered_questions.append(random_question.id)
+        request.session['answered_questions'] = answered_questions
+    else:
+        random_question = None
     correct_count = request.session.get('correct_count', 0)
-    if question_session >= a:
-        request.session['question_count'] = 0
-        return render(request, 'question/result.html', {'correct_count': correct_count})
-    question = question_list[question_session]
-
-    choices = Choice4.objects.filter(choice_to=b).all().order_by('?')
-
+    choices = Choice4.objects.filter(choice_to=random_question).all().order_by('?')
     if request.method == 'POST':
         selected_choice_id = request.POST.get('choice')
+        if not selected_choice_id:
+            error_message = "選択肢を選んでください。"
+            return render(request, "question/question_a.html",
+                          {'choices': choices, 'error_message': error_message,
+                           'count': question_session, 'random_question': random_question})
+
         selected_choice = get_object_or_404(Choice4, pk=str(selected_choice_id))
         select = selected_choice.__str__()
         answer = selected_choice.choice_to.answer
-
         if choices:
             request.session.setdefault('correct_count', 0)
             feedback = '正解です' if answer == select else '不正解です'  # select_choiceには選択した文字列が入る
             request.session['question_count'] += 1
             if answer == select:
                 request.session['correct_count'] += 1
-
         else:
             feedback = "クイズがありません。"
-
-        return render(request, 'question/next/next.html', {'question': question, 'feedback': feedback})
+        return render(request, 'question/next/next4.html',
+                      {'feedback': feedback, 'select': select, 'answer': answer})
     else:
         feedback = None
-
+    if question_session > 5:
+        request.session['answered_questions'] = []
+        request.session['question_count'] = 1
+        result_parsent = int((correct_count / 5) * 100)
+        if request.user.is_authenticated:  # ログインしているユーザーのみ保存
+            user = request.user
+            quiz_result = QuizResult(user=user, genre=genre, correct_count=result_parsent)
+            quiz_result.save()
+        return render(request, 'question/result.html', {'correct_count': correct_count, 'result_parsent':result_parsent})
     return render(request, "question/question_a.html",
-                  {'questions': q, 'choices': choices, 'feedback': feedback, 'correct_count': correct_count})
+                  {'choices': choices, 'feedback': feedback, 'correct_count': correct_count,
+                   'count': question_session, 'random_question':random_question})
+
 
 
 def question5(request):
-    question_session = request.session.setdefault('question_count', 0)
+    question_session = request.session.setdefault('question_count', 1)
     question_categoryid_get = Question5.objects.filter(question_category=5).all().order_by('create_at')
-    question_list = list(question_categoryid_get)
-    a = len(question_list)
-    b = random.uniform(1, a)
-    q = Question5.objects.filter(id=b).all()
-    q = q[0]
+    genre = get_object_or_404(Category, pk=5)
+    answered_questions = request.session.get('answered_questions', [])
+    unanswered_questions = [q for q in question_categoryid_get if q.id not in answered_questions]
+    if unanswered_questions:
+        random_question = random.choice(unanswered_questions)
+        answered_questions.append(random_question.id)
+        request.session['answered_questions'] = answered_questions
+    else:
+        random_question = None
     correct_count = request.session.get('correct_count', 0)
-    if question_session >= a:
-        request.session['question_count'] = 0
-        return render(request, 'question/result.html', {'correct_count': correct_count})
-    question = question_list[question_session]
-
-    choices = Choice5.objects.filter(choice_to=b).all().order_by('?')
-
+    choices = Choice5.objects.filter(choice_to=random_question).all().order_by('?')
     if request.method == 'POST':
         selected_choice_id = request.POST.get('choice')
+        if not selected_choice_id:
+            error_message = "選択肢を選んでください。"
+            return render(request, "question/question_a.html",
+                          {'choices': choices, 'error_message': error_message,
+                           'count': question_session, 'random_question': random_question})
+
         selected_choice = get_object_or_404(Choice5, pk=str(selected_choice_id))
         select = selected_choice.__str__()
         answer = selected_choice.choice_to.answer
-
         if choices:
             request.session.setdefault('correct_count', 0)
             feedback = '正解です' if answer == select else '不正解です'  # select_choiceには選択した文字列が入る
             request.session['question_count'] += 1
             if answer == select:
                 request.session['correct_count'] += 1
-
         else:
             feedback = "クイズがありません。"
-
-        return render(request, 'question/next/next5.html', {'question': question, 'feedback': feedback})
+        return render(request, 'question/next/next5.html',
+                      {'feedback': feedback, 'select': select, 'answer': answer})
     else:
         feedback = None
-
+    if question_session > 5:
+        request.session['answered_questions'] = []
+        request.session['question_count'] = 1
+        result_parsent = int((correct_count / 5) * 100)
+        if request.user.is_authenticated:  # ログインしているユーザーのみ保存
+            user = request.user
+            quiz_result = QuizResult(user=user, genre=genre, correct_count=result_parsent)
+            quiz_result.save()
+        return render(request, 'question/result.html', {'correct_count': correct_count, 'result_parsent':result_parsent})
     return render(request, "question/question_a.html",
-                  {'questions': q, 'choices': choices, 'feedback': feedback, 'correct_count': correct_count})
-
+                  {'choices': choices, 'feedback': feedback, 'correct_count': correct_count,
+                   'count': question_session, 'random_question':random_question})
 
 @login_required
 def question_new(request, category_id):

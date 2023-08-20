@@ -4,7 +4,6 @@
 <h2>選択肢登録</h2>
     <form method="post">
     {% csrf_token %}
-        {{ a }}
         {{ form.choice_to }}
     {{ form.fault }}
         <button type="submit">登録</button>

@@ -4,6 +4,7 @@ from django.db import models
 from django.conf import settings
 from django.db import models
 
+
 # Create your models here.
 
 class Category(models.Model):
@@ -18,6 +19,8 @@ class Category(models.Model):
         :return: （カテゴリ名）
         '''
         return self.category_title
+
+
 class Question(models.Model):
     question_category = models.ForeignKey(
         Category,
@@ -34,8 +37,10 @@ class Question(models.Model):
                                   on_delete=models.CASCADE)
     answer = models.CharField('正解', max_length=128)
     create_at = models.DateTimeField('投稿日', auto_now_add=True)
+
     def __str__(self):
         return self.question
+
 
 class Question2(models.Model):
     question_category = models.ForeignKey(
@@ -52,9 +57,11 @@ class Question2(models.Model):
                                   on_delete=models.CASCADE)
     answer = models.CharField('正解', max_length=128)
     create_at = models.DateTimeField('投稿日', auto_now_add=True)
+
     def __str__(self):
         return self.question
-    
+
+
 class Question3(models.Model):
     question_category = models.ForeignKey(
         Category,
@@ -70,8 +77,10 @@ class Question3(models.Model):
                                   on_delete=models.CASCADE)
     answer = models.CharField('正解', max_length=128)
     create_at = models.DateTimeField('投稿日', auto_now_add=True)
+
     def __str__(self):
         return self.question
+
 
 class Question4(models.Model):
     question_category = models.ForeignKey(
@@ -88,8 +97,10 @@ class Question4(models.Model):
                                   on_delete=models.CASCADE)
     answer = models.CharField('正解', max_length=128)
     create_at = models.DateTimeField('投稿日', auto_now_add=True)
+
     def __str__(self):
         return self.question
+
 
 class Question5(models.Model):
     question_category = models.ForeignKey(
@@ -106,6 +117,7 @@ class Question5(models.Model):
                                   on_delete=models.CASCADE)
     answer = models.CharField('正解', max_length=128)
     create_at = models.DateTimeField('投稿日', auto_now_add=True)
+
     def __str__(self):
         return self.question
 
@@ -118,9 +130,9 @@ class Choice(models.Model):
 
         on_delete=models.PROTECT
     ),
-    
+
     choice_to = models.ForeignKey(Question, verbose_name="問題文",
-                                     on_delete=models.CASCADE)
+                                  on_delete=models.CASCADE)
     fault = models.CharField('不正解1', max_length=128)
 
     is_correct = models.BooleanField(default=False)
@@ -184,7 +196,8 @@ class Choice4(models.Model):
 
     def __str__(self):
         return self.fault
-    
+
+
 class Choice5(models.Model):
     choice_category = models.ForeignKey(
         Category,
@@ -202,3 +215,15 @@ class Choice5(models.Model):
 
     def __str__(self):
         return self.fault
+
+
+class QuizResult(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL,
+                             verbose_name="回答者",
+                             on_delete=models.CASCADE)  # ユーザー情報
+    genre = models.ForeignKey(Category, verbose_name="カテゴリ", on_delete=models.CASCADE)  # ジャンル
+    correct_count = models.CharField('スコア', max_length=128)  # 正解数
+    timestamp = models.DateTimeField(auto_now_add=True)  # タイムスタンプ
+
+    def __str__(self):
+        return self.correct_count

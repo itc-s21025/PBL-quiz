@@ -75,3 +75,15 @@ body {
         background-color:rgba(200,200,200,0.8);
     }
 }
+
+
+@media (any-hover: hover) {
+  .buttonOutlineGradient::before {
+    transition: opacity 0.2s;
+    will-change: filter;
+  }
+
+  .buttonOutlineGradient:hover::before {
+    opacity: 1;
+  }
+}

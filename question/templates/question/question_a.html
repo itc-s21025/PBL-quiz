@@ -4,34 +4,57 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'question/question.css' %}">
+    <style>
+    .btn_02 {
+	display: block;
+	text-align: center;
+	vertical-align: middle;
+	text-decoration: none;
+	width: 200px;
+    margin-right: 100px;
+    margin-top: 20px;
+	padding: 1rem 4rem;
+	font-weight: bold;
+	border: 2px solid rgba(0, 0, 0, 0.51);
+    background: rgba(0, 0, 0, 0.51);
+	color: #fff;
+	transition: 0.5s;
+}
+.btn_02:hover {
+	color: rgba(0, 0, 0, 0.51);
+	background: #fff;
+}
+    </style>
 {% endblock %}
 {% block main %}
-<div class="main">
-    <div class="queContent">
-    {{ ran }}
-    <h1>{{ count }}問目 </h1>
-        <div class="question">
+    <div class="main">
+        <div class="queContent">
+            <h1>{{ count }}問目 </h1>
+            <div class="question">
 
-            {% if ran %}
-                <p class="queText">
-                    {{ ran }}
-                </p>
+                {% if random_question %}
+                    <p class="queText">
+                        {{ random_question }}
+                    </p>
 
-                </div>
-                </div>
-                <div class="radio">
-                    <form action="" method="post">
-                        {% csrf_token %}
-                        {% for choice in choices %}
-                            <input class="choice" type="radio" name="choice" id="choice{{ forloop.counter }}"
-                                   value="{{ choice.id }} ">
-                            <label for="choice{{ forloop.counter }}">{{ choice.fault }}</label><br>
-                        {% endfor %}
-                        <input type="submit" value="Submit">
-                    </form>
-                    {% else %}
-                    <p>クイズがありません。</p>
-                </div>
-            {% endif %}
-</div>
+                    </div>
+                    </div>
+                    <div class="radio">
+                        <form action="" method="post">
+                            {% csrf_token %}
+                            {% if error_message %}
+                                <p style="color: red;">{{ error_message }}</p>
+                            {% endif %}
+                            {% for choice in choices %}
+                                <input class="choice" type="radio" name="choice" id="choice{{ forloop.counter }}"
+                                       value="{{ choice.id }} ">
+                                <label for="choice{{ forloop.counter }}">{{ choice.fault }}</label><br>
+                            {% endfor %}
+                        <button type="submit" class="btn_02">回答する</button>
+                        </form>
+                        {% else %}
+                        <p>クイズがありません。</p>
+                    </div>
+                {% endif %}
+    </div>
 {% endblock %}

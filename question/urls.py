@@ -4,6 +4,7 @@ from question import views
 
 urlpatterns = [
     path('category/', views.category, name="category"),
+    path('mypages/', views.MypageView.as_view(), name="mypages"),
     path('quiz/', views.question, name="question"),
     path('quiz2/', views.question2, name="question2"),
     path('quiz3/', views.question3, name="question3"),

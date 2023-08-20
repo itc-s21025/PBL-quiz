@@ -1,13 +1,43 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+{% extends 'base.html' %}
+{% load static %}
+{% block extraheader %}
     <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h1>{{ question.question_text }}</h1>
-    <p>{{ feedback }}</p>
-    <a href="{% url 'question2' %}">次の質問へ</a>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'question/question.css' %}">
+    <link rel="stylesheet" href="{% static 'question/next.css ' %}">
+    <style>
+        .next {
+            text-align: center;
+            margin-top: 300px;
 
-</body>
-</html>
+        }
+
+        a.btn_02 {
+            display: block;
+            text-align: center;
+            vertical-align: middle;
+            text-decoration: none;
+            width: 250px;
+            padding: 1rem 4rem;
+            margin: 20px auto auto;
+            font-weight: bold;
+            border: 2px solid rgba(0, 0, 0, 0.51);
+            background: rgba(0, 0, 0, 0.51);
+            color: #fff;
+            transition: 0.5s;
+        }
+
+        a.btn_02:hover {
+            color: rgba(0, 0, 0, 0.51);
+            background: #fff;
+        }
+
+    </style>
+{% endblock %}
+{% block main %}
+    <div class="next">
+        <h2>{{ feedback }}</h2><br>
+        <h3>正解は{{ answer }}</h3>
+        <a href="{% url 'question2' %}" class="btn_02">次の問題へ</a>
+    </div>
+{% endblock %}
