@@ -1,12 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
-<h2>正解数: 10問中　{{ correct_count }}問正解でした</h2>
-<h3>{{ result_parsent }}</h3>
-<a href="{% url 'top' %}"><button>トップページに戻る</button></a>
-</body>
-</html>
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+{% block extraheader %}
+    <style>
+    .result {
+        text-align: center;
+    }
+
+    .btn_02 {
+	display: block;
+	text-align: center;
+	vertical-align: middle;
+	text-decoration: none;
+	width: 300px;
+    margin-left: 420px;
+    margin-top: 20px;
+	padding: 1rem 4rem;
+	font-weight: bold;
+	border: 2px solid rgba(0, 0, 0, 0.51);
+    background: rgba(0, 0, 0, 0.51);
+	color: #fff;
+	transition: 0.5s;
+}
+.btn_02:hover {
+	color: rgba(0, 0, 0, 0.51);
+	background: #fff;
+}
+    </style>
+{% endblock %}
+{% block main %}
+    <div class="result">
+<h2>正解数: 10問中 /　{{ correct_count }}問正解でした</h2>
+<h3>スコア：{{ result_parsent }}</h3>
+    <a href="{% url 'top' %}" class="btn_02">トップページに戻る</a>
+{% endblock %}
+</div>

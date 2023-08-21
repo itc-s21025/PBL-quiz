@@ -20,6 +20,8 @@ class MypageView(ListView):
 
 def top(request):
     request.session['correct_count'] = 0
+    request.session['answered_questions'] = []
+    request.session['question_count'] = 1
     #request.session.clear()
     return render(request, 'question/top.html')
 
@@ -66,8 +68,6 @@ def question(request):
     else:
         feedback = None
     if question_session > 5:
-        request.session['answered_questions'] = []
-        request.session['question_count'] = 1
         result_parsent = int((correct_count / 5) * 100)
         if request.user.is_authenticated:  # ログインしているユーザーのみ保存
             user = request.user
@@ -117,8 +117,6 @@ def question2(request):
     else:
         feedback = None
     if question_session > 5:
-        request.session['answered_questions'] = []
-        request.session['question_count'] = 1
         result_parsent = int((correct_count / 5) * 100)
         if request.user.is_authenticated:  # ログインしているユーザーのみ保存
             user = request.user
@@ -169,8 +167,6 @@ def question3(request):
     else:
         feedback = None
     if question_session > 5:
-        request.session['answered_questions'] = []
-        request.session['question_count'] = 1
         result_parsent = int((correct_count / 5) * 100)
         if request.user.is_authenticated:  # ログインしているユーザーのみ保存
             user = request.user
@@ -221,8 +217,6 @@ def question4(request):
     else:
         feedback = None
     if question_session > 5:
-        request.session['answered_questions'] = []
-        request.session['question_count'] = 1
         result_parsent = int((correct_count / 5) * 100)
         if request.user.is_authenticated:  # ログインしているユーザーのみ保存
             user = request.user
@@ -273,8 +267,6 @@ def question5(request):
     else:
         feedback = None
     if question_session > 5:
-        request.session['answered_questions'] = []
-        request.session['question_count'] = 1
         result_parsent = int((correct_count / 5) * 100)
         if request.user.is_authenticated:  # ログインしているユーザーのみ保存
             user = request.user

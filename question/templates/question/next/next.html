@@ -36,6 +36,15 @@
 {% endblock %}
 {% block main %}
     <div class="next">
+        {% if feedback == '正解です' %}
+            <audio autoplay>
+                <source src="{% static 'Quiz-Correct_Answer01-1.mp3' %}" type="audio/mp3">
+            </audio>
+        {% elif feedback == '不正解です' %}
+            <audio autoplay>
+                <source src="{% static 'Quiz-Wrong_Buzzer01-1.mp3' %}" type="audio/mp3">
+            </audio>
+        {% endif %}
         <h2>{{ feedback }}</h2><br>
         <h3>正解は{{ answer }}</h3>
         <a href="{% url 'question' %}" class="btn_02">次の問題へ</a>

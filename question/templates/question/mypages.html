@@ -1,18 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load django_bootstrap5 %}
+{% block main %}
 {% if user.is_authenticated %}
-{{ user.username }}
+    <h1>{{ user.username }}さん　　　クイズのスコアページ</h1>
     {% for e in object_list %}
-    {{ e.timestamp }}
-        {{ e.genre }}
-        {{ e.correct_count }}
+   <table class="table">
+        <thead>
+        <tr>
+            <th>回答日</th>
+            <th>カテゴリ</th>
+            <th>スコア</th>
+        </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th>{{ e.timestamp }}</th>
+                <th>{{ e.genre }}</th>
+                <th>{{ e.correct_count }}</th>
+            </tr>
+        </tbody>
+   </table>
     {% endfor %}
 {% endif %}
-
-</body>
-</html>
+{% endblock %}
