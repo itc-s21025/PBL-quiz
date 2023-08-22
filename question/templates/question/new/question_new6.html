@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load django_bootstrap5 %}
+{% block main %}
+      <h2>問題文登録</h2>
+    <form method="post">
+    {% csrf_token %}
+        　<ul>
+        <ul>カテゴリ</ul>
+        <ul>{{ form.question_category }}</ul><br>
+        <ul>問題文</ul>
+        <ul>{{ form.question }}</ul><br>
+        <ul>正解</ul>
+            <ul>{{ form.answer }}</ul><br>
+        <ul><button type="submit">登録</button></ul>
+    </ul>
+    </form>
+{% endblock %}

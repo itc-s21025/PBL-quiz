@@ -10,6 +10,7 @@ urlpatterns = [
     path('quiz3/', views.question3, name="question3"),
     path('quiz4/', views.question4, name="question4"),
     path('quiz5/', views.question5, name="question5"),
+    path('quiz6/', views.question6, name="question6"),
     path('next/', views.next, name='next'),
     path('result/', views.result, name='result'),
     path("<int:category_id>/question_new/", views.question_new, name="question_new"),
@@ -22,4 +23,6 @@ urlpatterns = [
     path("<int:question_id>/choice_new4/", views.choice_new4, name="choice_new4"),
     path("<int:category_id>/question_new5/", views.question_new5, name="question_new5"),
     path("<int:question_id>/choice_new5/", views.choice_new5, name="choice_new5"),
+    path("<int:category_id>/question_new6/", views.question_new6, name="question_new6"),
+    path("<int:question_id>/choice_new6/", views.choice_new6, name="choice_new6"),
 ]

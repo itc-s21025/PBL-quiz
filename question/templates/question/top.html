@@ -4,20 +4,30 @@
     <title>トップページ</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'question/top.css' %}">
+    <style>
+        .category {
+            margin-top: 100px;
+        }
+    </style>
 {% endblock %}
 {% block main %}
-<div class="main">
+    <div class="main">
+        <h1>
+            ４択クイズ
+        </h1><br>
+        <h3>解きたいクイズのカテゴリを選んでください</h3>
         <form class="category">
             <select class="select" name="example" required onChange="location.href=value;">
-            <option class="option" value="#">カテゴリー選択</option>
-            <option class="option" value="{% url 'question' %}">漢字</option>
-            <option class="option" value="{% url 'question2' %}">計算</option>
-            <option class="option" value="{% url 'question3' %}">社会</option>
-            <option class="option" value="{% url 'question4' %}">漫画・アニメ</option>
-            <option class="option" value="{% url 'question5' %}">基本情報</option>
+                <option class="option" value="#">カテゴリー選択</option>
+                <option class="option" value="{% url 'question' %}">漢字</option>
+                <option class="option" value="{% url 'question2' %}">計算</option>
+                <option class="option" value="{% url 'question3' %}">社会</option>
+                <option class="option" value="{% url 'question4' %}">漫画・アニメ</option>
+                <option class="option" value="{% url 'question5' %}">基本情報</option>
+                <option class="option" value="{% url 'question6' %}">スペシャリスト科３年</option>
             </select>
-        
+
         </form>
         <img src="{% static 'question/images/btn.jpg' %}" alt="" width="300" height="300">
-</div>
+    </div>
 {% endblock %}

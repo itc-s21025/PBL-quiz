@@ -121,6 +121,26 @@ class Question5(models.Model):
     def __str__(self):
         return self.question
 
+class Question6(models.Model):
+    question_category = models.ForeignKey(
+        Category,
+
+        verbose_name='カテゴリ',
+
+        on_delete=models.PROTECT
+    )
+    question = models.TextField('問題文', blank=True)
+
+    create_by = models.ForeignKey(settings.AUTH_USER_MODEL,
+                                  verbose_name="投稿者",
+                                  on_delete=models.CASCADE)
+    answer = models.CharField('正解', max_length=128)
+    create_at = models.DateTimeField('投稿日', auto_now_add=True)
+
+    def __str__(self):
+        return self.question
+
+
 
 class Choice(models.Model):
     choice_category = models.ForeignKey(
@@ -213,8 +233,27 @@ class Choice5(models.Model):
 
     is_correct = models.BooleanField(default=False)
 
+
+class Choice6(models.Model):
+    choice_category = models.ForeignKey(
+        Category,
+
+        verbose_name='カテゴリ',
+
+        on_delete=models.PROTECT
+    ),
+
+    choice_to = models.ForeignKey(Question6, verbose_name="問題文",
+                                  on_delete=models.CASCADE)
+    fault = models.CharField('不正解1', max_length=128)
+
+    is_correct = models.BooleanField(default=False)
+
     def __str__(self):
         return self.fault
+
+
+
 
 
 class QuizResult(models.Model):
